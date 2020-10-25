@@ -12,9 +12,11 @@ namespace RabbitMQ2
     {
         private static async Task Main(params string[] args)
         {
+            ThreadPool.SetMinThreads(200, 200);
+
             var factory = new ConnectionFactory
             {
-                HostName = "127.0.0.11",
+                HostName = "127.0.0.1",
                 Port = 5672,
                 UserName = "guest",
                 Password = "guest",
