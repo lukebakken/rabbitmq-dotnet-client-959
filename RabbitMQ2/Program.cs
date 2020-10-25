@@ -31,7 +31,7 @@ namespace RabbitMQ2
                 c.ExchangeDeclare("test", durable: true, type: "topic");
 
             var max_parallel = 100;
-            var total_ticks = 0L;
+            var total_millis = 0L;
             var total_count = 0L;
             var total_errors = 0L;
 
@@ -78,7 +78,7 @@ namespace RabbitMQ2
                     act(connection);
                     stopwatch.Stop();
 
-                    Interlocked.Add(ref total_ticks, stopwatch.ElapsedTicks);
+                    Interlocked.Add(ref total_millis, stopwatch.ElapsedMilliseconds);
                     Interlocked.Increment(ref total_count);
                 }
                 catch (Exception ex)
@@ -93,12 +93,15 @@ namespace RabbitMQ2
 
             stopwatch_total.Stop();
 
-            Console.WriteLine("Sent {0} messages, avg time {1} ms, {2} errors",
+            Console.WriteLine("Sent {0} messages, avg time {1} ms, {2} errors (total_millis: {3})",
                 total_count,
-                TimeSpan.FromTicks(total_ticks / total_count).TotalMilliseconds,
-                total_errors);
+                TimeSpan.FromMilliseconds(total_millis / total_count).TotalMilliseconds,
+                total_errors,
+                total_millis);
 
-            Console.WriteLine("Total time is {0} seconds", stopwatch_total.Elapsed.TotalSeconds);
+            Console.WriteLine("Total time is {0} seconds{1}",
+                    stopwatch_total.Elapsed.TotalSeconds,
+                    Environment.NewLine);
         }
 
 
