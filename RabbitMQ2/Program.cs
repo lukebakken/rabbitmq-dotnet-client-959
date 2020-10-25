@@ -12,7 +12,8 @@ namespace RabbitMQ2
     {
         private static async Task Main(params string[] args)
         {
-            ThreadPool.SetMinThreads(200, 200);
+            int count = Environment.ProcessorCount * 32;
+            ThreadPool.SetMinThreads(count, count);
 
             var factory = new ConnectionFactory
             {
@@ -66,6 +67,8 @@ namespace RabbitMQ2
                 }
             }
 
+            var stopwatch_total  = Stopwatch.StartNew();
+
             var tasks = Enumerable.Range(0, max_parallel).Select(_ => Task.Run(() =>
             {
                 var stopwatch = Stopwatch.StartNew();
@@ -88,10 +91,14 @@ namespace RabbitMQ2
 
             await Task.WhenAll(tasks);
 
+            stopwatch_total.Stop();
+
             Console.WriteLine("Sent {0} messages, avg time {1} ms, {2} errors",
                 total_count,
                 TimeSpan.FromTicks(total_ticks / total_count).TotalMilliseconds,
                 total_errors);
+
+            Console.WriteLine("Total time is {0} seconds", stopwatch_total.Elapsed.TotalSeconds);
         }
 
 

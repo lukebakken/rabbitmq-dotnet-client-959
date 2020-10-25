@@ -19,7 +19,7 @@ namespace RabbitMQ
                 UserName = "guest",
                 Password = "guest",
                 VirtualHost = "/",
-                RequestedConnectionTimeout = 2000,
+                RequestedConnectionTimeout = (int)TimeSpan.FromSeconds(2).TotalMilliseconds,
                 DispatchConsumersAsync = true
             };
 
@@ -64,6 +64,8 @@ namespace RabbitMQ
                 }
             }
 
+            var stopwatch_total  = Stopwatch.StartNew();
+
             var tasks = Enumerable.Range(0, max_parallel).Select(_ => Task.Run(() =>
             {
                 var stopwatch = Stopwatch.StartNew();
@@ -86,10 +88,14 @@ namespace RabbitMQ
 
             await Task.WhenAll(tasks);
 
+            stopwatch_total.Stop();
+
             Console.WriteLine("Sent {0} messages, avg time {1} ms, {2} errors",
                 total_count,
                 TimeSpan.FromTicks(total_ticks / total_count).TotalMilliseconds,
                 total_errors);
+
+            Console.WriteLine("Total time is {0} seconds", stopwatch_total.Elapsed.TotalSeconds);
         }
 
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+dotnet build ./RabbitMQ.sln
+
 for _dir in 'RabbitMQ' 'RabbitMQ2'
 do
     pushd "$_dir"
