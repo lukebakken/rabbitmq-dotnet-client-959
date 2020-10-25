@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+
+  rbmq:
+    image: rabbitmq:3.8-management-alpine
+    ports:
+      - "127.0.0.11:5672:5672"
+      - "127.0.0.11:15672:15672"
+    networks:
+      - rabbitnet 
+    hostname: rbmq1
+
+networks:
+  rabbitnet:
+    driver: bridge
+
